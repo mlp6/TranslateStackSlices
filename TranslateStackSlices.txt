@@ -1,0 +1,41 @@
+// TranslateStackSlices.txt
+// 
+// Remove linear skews from sliced 3D datasets.
+//
+// ImageJ macro that loads in an image sequence to a stack define the x,y translation
+// to apply to each slice of the stack (scales with slice number), and perform the
+// translation.
+//
+// Mark Palmeri (mlp6)
+// mark.palmeri@duke.edu
+// 2009-10-21
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+    macro "TranslateStackSlices" {
+    run("Image Sequence...");
+
+    // setup some default values
+    xinc=1;
+    yinc=1;
+
+    Dialog.create("Translation");
+    Dialog.addNumber("X-Increment",xinc);
+    Dialog.addNumber("Y-Increment",yinc);
+    Dialog.show;
+    xinc=Dialog.getNumber;
+    yinc=Dialog.getNumber;
+
+    // loop over all of the stack slices
+    for (i=1; i<=nSlices; i++) {
+        setSlice(i);
+        // traslate the slices by the specified increments, scaled by the
+        // slice number 
+        run("Translate...","x="+xinc*i+" y="+yinc*i+" interpolation=None slice");
+    }
+
+    // this save command is necessary to be able to close the stack; it
+    // appears to be specific to saving the stack as a TIFF for some reason
+    save("stack.tif");
+
+}
